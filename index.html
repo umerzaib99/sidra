@@ -383,11 +383,11 @@
     const TO_NAME = "Sidra";
     const WHATSAPP_NUMBER = "923007913469";
 
-    const YES_MESSAGE =
-      `Hey ${TO_NAME} 💘\n\nIt's ${FROM_NAME}.\nYou just made my whole day.\nCan’t wait to celebrate Valentine’s with you. 🌹✨`;
+const YES_MESSAGE =
+  `Hey Umer 💘\n\nYes — I’ll be your Valentine. 🫶\nWhere are we going? 😄`;
 
-    const NO_MESSAGE =
-      `Hey ${TO_NAME} 🙈\n\nIt's ${FROM_NAME}.\nI’ll accept the no… but I still had to tell you:\nYou’re special to me. Always. 🤍`;
+const NO_MESSAGE =
+  `Hey Umer 🙈\n\nYou’re sweet, but I can’t be your Valentine.\nStill… thank you for asking. 🤍`;
 
     function openWhatsApp(message){
       const text = encodeURIComponent(message);
@@ -517,26 +517,36 @@
       floaties.appendChild(s);
     }
 
-    // Autoplay music (will start after first tap if browser blocks)
-    const bgMusic = document.getElementById("bgMusic");
+    // ====== Mobile-friendly music start ======
+const bgMusic = document.getElementById("bgMusic");
 
-    async function tryPlayMusic(){
-      if (!bgMusic) return;
-      try {
-        bgMusic.volume = 0.75;
-        await bgMusic.play();
-      } catch (_) {}
-    }
+// optional: a tiny hint banner
+const hint = document.createElement("div");
+hint.textContent = "Tap anywhere to start the music ♪";
+hint.style.cssText =
+  "position:fixed;left:50%;top:16px;transform:translateX(-50%);" +
+  "padding:10px 14px;border-radius:999px;" +
+  "background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);" +
+  "color:rgba(255,255,255,.85);font-size:13px;z-index:9999;" +
+  "backdrop-filter:blur(10px)";
+document.body.appendChild(hint);
 
-    window.addEventListener("load", tryPlayMusic, { once:true });
+function startMusicFromGesture(){
+  if (!bgMusic) return;
+  bgMusic.volume = 0.75;
+  bgMusic.play().then(() => {
+    hint.remove();
+    window.removeEventListener("touchstart", startMusicFromGesture);
+    window.removeEventListener("click", startMusicFromGesture);
+  }).catch(() => {
+    // if it still fails, keep the hint so user can try again
+  });
+}
 
-    function startMusicOnFirstTap(){
-      tryPlayMusic();
-      window.removeEventListener("pointerdown", startMusicOnFirstTap);
-      window.removeEventListener("keydown", startMusicOnFirstTap);
-    }
-    window.addEventListener("pointerdown", startMusicOnFirstTap);
-    window.addEventListener("keydown", startMusicOnFirstTap);
+// iPhone/Android prefer touchstart
+window.addEventListener("touchstart", startMusicFromGesture, { passive: true });
+window.addEventListener("click", startMusicFromGesture);
+
   </script>
 </body>
 </html>
